@@ -1000,8 +1000,10 @@ _Requires_lock_not_held_(pContext->TxLock) NTSTATUS VIOSockSendResetNoSock(IN PD
     pTxEntry->op = VIRTIO_VSOCK_OP_RST;
     pTxEntry->reply = FALSE;
     pTxEntry->flags = 0;
+    pTxEntry->Timeout = 0;
 
     WdfSpinLockAcquire(pContext->TxLock);
+    InterlockedIncrement(&pContext->TxEnqueued);
     InsertTailList(&pContext->TxList, &pTxEntry->ListEntry);
     WdfSpinLockRelease(pContext->TxLock);
 
